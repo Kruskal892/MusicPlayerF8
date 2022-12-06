@@ -11,11 +11,13 @@ const progress = $('#progress');
 const nextBtn = $('.btn-next');
 const preBtn = $('.btn-playback');
 const shuffleBtn = $('.btn-shuffle');
+const repeatBtn = $('.btn-repeat');
 
 const app = {
     currentIndex: 0,
     isPlaying: false,
     isShuffle: false,
+    isRepeat: false,
 
     songs: [
         {
@@ -64,9 +66,9 @@ const app = {
     ],
     // render UI elements 
     render: function () {
-        const htmls = this.songs.map(song => {
+        const htmls = this.songs.map((song, index) => {
             return `
-            <div class="song">
+            <div class="song ${index === this.currentIndex ? 'active' : ''}">
                 <div class="thumb"
                 style="background-image: url('${song.image}')">
                 </div>
@@ -150,30 +152,50 @@ const app = {
         }
         // skip song 
         nextBtn.onclick = function () {
-            if(_this.isShuffle) {
+            if (_this.isShuffle)
+            {
                 _this.shuffleSong();
-            }else {
+            } else
+            {
                 _this.nextSong();
             }
             audio.play();
+            _this.render();
         }
         // Previous song
         preBtn.onclick = function () {
-            if(_this.isShuffle) {
+            if (_this.isShuffle)
+            {
                 _this.shuffleSong();
-            }else {
+            } else
+            {
                 _this.previousSong();
             }
             audio.play();
+            _this.render();
         }
         //Shuffle songs 
         shuffleBtn.onclick = function (e) {
             _this.isShuffle = !_this.isShuffle
             shuffleBtn.classList.toggle('active', _this.isShuffle);
         }
+
+        // Handle repeat song
+        repeatBtn.onclick = function (e) {
+            _this.isRepeat = !_this.isRepeat
+            repeatBtn.classList.toggle('active', _this.isRepeat);
+        }
+
+
         // Auto next 
         audio.onended = function () {
-            nextBtn.click();
+            if (_this.isRepeat)
+            {
+                audio.play();
+            } else
+            {
+                nextBtn.click();
+            }
         }
     },
     loadCurrentSong: function () {
@@ -200,10 +222,11 @@ const app = {
     },
     shuffleSong: function () {
         let newIndex
-        do {
+        do
+        {
             newIndex = Math.floor(Math.random() * this.songs.length)
-        } while (newIndex === this.currentIndex  )
-        
+        } while (newIndex === this.currentIndex)
+
 
         this.currentIndex = newIndex;
         this.loadCurrentSong();
