@@ -161,6 +161,7 @@ const app = {
             }
             audio.play();
             _this.render();
+            _this.scrollToActiveSong();
         }
         // Previous song
         preBtn.onclick = function () {
@@ -197,6 +198,14 @@ const app = {
                 nextBtn.click();
             }
         }
+    },
+    scrollToActiveSong: function () {
+        setTimeout(() => {
+            $('.song.active').scrollIntoView({
+                behavior : 'smooth',
+                block: 'center',
+            });
+        }, 50)
     },
     loadCurrentSong: function () {
         heading.textContent = this.currentSong.name;
